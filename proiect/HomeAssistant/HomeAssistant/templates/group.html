@@ -1,0 +1,30 @@
+{% extends "layouts/base.html" %}
+
+
+{% block content %}
+<h1> Group {{group.friendly_name}}</h1>
+<p> Add a new device to this group!</p>
+{% for device in devices %}
+<form class="form-inline" method="POST" action="/groups/{{group.friendly_name}}/">
+        {% csrf_token %}
+        <div class="form-group mb-2">
+        <button type="submit" class="btn btn-primary" name="add/{{group.friendly_name}}/{{device.friendly_name}}">Add device {{device.friendly_name}} to this group</button>
+    </div>
+    </form>
+{% endfor %}
+{% for device in devices %}
+    {% for member in group.members %}
+        {% if member.ieee_address == device.ieee_address %}
+            <div class="card">
+                <div class="card-body">
+                 <a href="/items/{{device.friendly_name}}"><h5 class="card-title">{{device.friendly_name}}</h5></a>
+                  <p class="card-text">Type: {{device.type}}</p>
+                  <p class="card-text">Vendor: {{device.vendor}}</p>
+                  <p class="card-text">Power source: {{device.power_source}}</p>
+                  <p class="card-text">Supported: {{device.supported}}</p>
+                </div>
+             </div>
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+{% endblock content %}

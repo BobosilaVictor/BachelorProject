@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+
+
+{% block content %}
+<div class="container-fluid">
+  <h1 class="text-center">Welcome to your home!</h1>
+  <h3 class="text-center">Here are the devices that I have found</h3>
+  <hr>
+</div>
+<div class="card-deck" >
+{% for device in devices %}
+  <div class="card">
+    <img class="card-img-top" src="https://www.zigbee2mqtt.io/images/devices/{{device.model_name}}.jpg" style="width: 10rem; height:10rem; align:center;">
+    <div class="card-body">
+      <a href="items/{{device.friendly_name}}"><h5 class="card-title">{{device.friendly_name}}</h5></a>
+      <p class="card-text">Type: {{device.type}}</p>
+      <p class="card-text">Vendor: {{device.vendor}}</p>
+      <p class="card-text">Power source: {{device.power_source}}</p>
+      <p class="card-text">Supported: {{device.supported}}</p>
+    </div>
+  </div>
+
+{% endfor %}
+</div>
+
+{% endblock content %}

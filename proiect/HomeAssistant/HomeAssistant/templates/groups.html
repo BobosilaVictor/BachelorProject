@@ -1,0 +1,31 @@
+{% extends "layouts/base.html" %}
+
+
+{% block content %}
+
+
+<h1>Here are your groups</h1>
+
+ <form class="form-inline" method="POST" action="/groups/">
+    {% csrf_token %}
+    <div class="form-group mb-2">
+     <input class="form-control" type="text" placeholder="Group Name" name="add">
+    <button type="submit" class="btn btn-primary" name="submit_new" value="submit_new">Create a new group!</button>
+    </div>
+</form>
+
+
+{% for group in groups %}
+<div class="card">
+    <div class="card-body">
+      <a href="{{group.friendly_name}}/"><h5 class="card-title">{{group.friendly_name}}</h5></a>
+      <p class="card-text">ID: {{group.group_id}}</p>
+      <p class="card-text">Members:</p>
+      {% for member in group.members %}
+        <p class="card-text">{{member.ieee_address}}</p>
+      {% endfor %}
+    </div>
+  </div>
+{% endfor %}
+
+{% endblock content %}

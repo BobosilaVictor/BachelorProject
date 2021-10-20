@@ -1,0 +1,97 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<body>
+    <div class="item-detail">
+        <h1> {{ device.friendly_name }}</h1>
+        <img class="card-img-top" src="https://www.zigbee2mqtt.io/images/devices/{{device.model_name}}.jpg" style="width: 10rem; height:10rem; align:center;">
+        <form class="form-inline" method="POST" action="/items/{{device.friendly_name}}/">
+            {% csrf_token %}
+                <div class="form-group mb-2">
+                <input class="form-control" type="text" placeholder="Change Device Name" name="rename">
+                <button type="submit" class="btn btn-primary">Change</button>
+                </div>
+        </form>
+        {% for exposed in exposes %}
+            {% if device.friendly_name == exposed.device.friendly_name%}
+              {% for states, values in exposed.state.items%}
+                <ul class="list-group">
+                  <li class="list-group-item">{{states}}={{values}}</li>
+                </ul>
+            {% endfor %}
+             {% for item in exposed.exposes %}
+                {% if item.features != None %}
+                    {% for feature in item.features %}
+                        {% if feature.type == 'binary' and feature.access != 1 %}
+                            <p>{{feature.name}} -> {{feature.description}}</p>
+                            <form class="form-inline" method="POST" action="/items/{{device.friendly_name}}/">
+                                {% csrf_token %}
+                                <div class="form-group mb-2">
+                                <button type="submit" class="btn btn-primary" name="binary/{{feature.name}}" value="On">On</button>
+                                <button type="submit" class="btn btn-primary" name="binary/{{feature.name}}" value="Off">Off</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                          {% if feature.type == 'numeric' and feature.access != 1 %}
+                            <p>{{feature.name}} -> {{feature.description}}</p>
+                            <form class="form-inline" method="POST" action="/items/{{device.friendly_name}}/">
+                                {% csrf_token %}
+                                <div class="form-group mb-2">
+                                <input class="form-control" type="text" placeholder="Default input" name="numeric/{{feature.name}}">
+                                <button type="submit" class="btn btn-primary">Change</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                        {% if feature.type == 'enum' and feature.access != 1 %}
+                            <p>{{feature.name}} -> {{feature.description}}</p>
+                            <form class="form-inline" method="POST" action="/items/{{device.friendly_name}}/">
+                                {% csrf_token %}
+                                <div class="form-group mb-2">
+                                {% for val in feature.values %}
+                                <button type="submit" class="btn btn-primary" name="enum/{{feature.name}}" value="{{feature.name}}">{{val}}}</button>
+                                {% endfor %}
+                                </div>
+                            </form>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                   {% if item.type == 'binary' and item.access != 1 %}
+                            <p>{{item.name}} -> {{item.description}}</p>
+                            <form class="form-inline" method="POST" action="/items/{{device.friendly_name}}/">
+                                {% csrf_token %}
+                                <div class="form-group mb-2">
+                                <button type="button" class="btn btn-primary" name="binary/{{item.name}}">On</button>
+                                <button type="button" class="btn btn-primary" name="binary/{{item.name}}">Off</button>
+                                <button type="submit" class="btn btn-primary">Change</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                          {% if item.type == 'numeric' and item.access != 1 %}
+                            <p>{{item.name}} -> {{item.description}}</p>
+                            <form class="form-inline" method="POST" action="/items/{{device.friendly_name}}/">
+                                {% csrf_token %}
+                                <div class="form-group mb-2">
+                                <input class="form-control" type="text" placeholder="Default input" name="numeric/{{item.name}}">
+                                <button type="submit" class="btn btn-primary">Change</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                        {% if item.type == 'enum' and item.access != 1 %}
+                            <p>{{item.name}} -> {{item.description}}</p>
+                            <form class="form-inline" method="POST" action="/items/{{device.friendly_name}}/">
+                                {% csrf_token %}
+                                <div class="form-group mb-2">
+                                {% for val in item.values %}
+                                <button type="submit" class="btn btn-primary" name="enum/{{item.name}}" value="{{val}}">{{val}}</button>
+                                {% endfor %}
+                                </div>
+                            </form>
+                        {% endif %}
+                {% endif %}
+             {% endfor %}
+            {% endif %}
+        {% endfor %}
+    </div>
+
+</body>
+{% endblock content %}
